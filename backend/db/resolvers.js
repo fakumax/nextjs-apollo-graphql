@@ -1,3 +1,4 @@
+import bcryptjs from 'bcryptjs';
 import Usuario from '../models/Usuario.js';
 
 const cursos = [
@@ -29,8 +30,10 @@ const resolvers = {
       if (existeUsuario) {
         throw new Error('El usuario ya está registrado');
       }
-      console.log(existeUsuario);
+      //console.log(existeUsuario);
       //Hashear Password
+      const salt = await bcryptjs.genSalt(10);
+      input.password = await bcryptjs.hash(password, salt);
 
       try {
         //Guardar en la DB

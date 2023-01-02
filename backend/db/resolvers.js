@@ -1,3 +1,5 @@
+import Usuario from '../models/Usuario.js';
+
 const cursos = [
   { titulo: 'javascript', tecnologia: 'ecmascript 6' },
   { titulo: 'html', tecnologia: 'html 5' },
@@ -18,6 +20,27 @@ const resolvers = {
       return resultado;
     },
     obtenerTecnologias: () => cursos,
+  },
+  Mutation: {
+    nuevoUsuario: async (_, { input }) => {
+      const { email, password } = input;
+      // Revisar si el usuario ya esta registrado.
+      const existeUsuario = await Usuario.findOne({ email });
+      if (existeUsuario) {
+        throw new Error('El usuario ya está registrado');
+      }
+      console.log(existeUsuario);
+      //Hashear Password
+
+      try {
+        //Guardar en la DB
+        const usuario = new Usuario(input);
+        usuario.save(); //guardar en la DB
+        return usuario;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 };
 

@@ -51,6 +51,9 @@ const resolvers = {
       if (!existeUsuario) {
         throw new Error('El usuario no existe');
       }
+      // Revisar si el password es correcto
+
+      // Crear el token
     },
   },
 };

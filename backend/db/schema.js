@@ -13,8 +13,7 @@ const typeDefs = gql`
     tecnologia: String
   }
   type Query {
-    obtenerCursos(input: CursoInput!): [Curso]
-    obtenerTecnologias: [Tecnologia]
+    obtenerUsuario(token: String!): Usuario
   }
 
   # mutation

@@ -1,27 +1,25 @@
 import bcryptjs from 'bcryptjs';
 import Usuario from '../models/Usuario.js';
+import * as dotenv from 'dotenv';
+dotenv.config({ path: 'variables.env' });
+import * as jwt from 'jsonwebtoken';
 
-const cursos = [
-  { titulo: 'javascript', tecnologia: 'ecmascript 6' },
-  { titulo: 'html', tecnologia: 'html 5' },
-  { titulo: 'css', tecnologia: 'css 3' },
-  { titulo: 'java', tecnologia: 'java werever' },
-  { titulo: 'nextjs', tecnologia: 'react' },
-  { titulo: 'nestjs', tecnologia: 'react' },
-];
+const crearToken = (usuario, secreta, expiresIn) => {
+  console.log(usuario);
+  const { id, email, nombre, apellido } = usuario;
+  return jwt.sign({ id, email, nombre, apellido }, secreta, { expiresIn });
+};
 
 //Resolvers
 
 const resolvers = {
   Query: {
-    obtenerCursos: (_, { input }, ctx) => {
-      const resultado = cursos.filter(
-        (curso) => curso.tecnologia === input.tecnologia
-      );
-      return resultado;
+    obtenerUsuario: async (_, { token }) => {
+      const usuarioId = await jwt.verify(token, process.env.SECRETA);
+      return usuarioId;
     },
-    obtenerTecnologias: () => cursos,
   },
+
   Mutation: {
     nuevoUsuario: async (_, { input }) => {
       const { email, password } = input;
@@ -52,8 +50,14 @@ const resolvers = {
         throw new Error('El usuario no existe');
       }
       // Revisar si el password es correcto
-
+      const passwordCorrecto = await bcryptjs.compare(password, existeUsuario.password);
+      if (!passwordCorrecto) {
+        throw new Error('El password es incorrecto');
+      }
       // Crear el token
+      return {
+        token: crearToken(existeUsuario, process.env.SECRETA, '24hs'),
+      };
     },
   },
 };

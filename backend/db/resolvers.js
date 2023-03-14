@@ -1,11 +1,11 @@
+import jwt from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';
 import Usuario from '../models/Usuario.js';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: 'variables.env' });
-import * as jwt from 'jsonwebtoken';
 
 const crearToken = (usuario, secreta, expiresIn) => {
-  console.log(usuario);
+  //console.log(usuario);
   const { id, email, nombre, apellido } = usuario;
   return jwt.sign({ id, email, nombre, apellido }, secreta, { expiresIn });
 };
@@ -56,7 +56,7 @@ const resolvers = {
       }
       // Crear el token
       return {
-        token: crearToken(existeUsuario, process.env.SECRETA, '24hs'),
+        token: crearToken(existeUsuario, process.env.SECRETA, '1d'),
       };
     },
   },
